@@ -1,7 +1,7 @@
 // Add imports above this line
 import simpleLightbox from 'simplelightbox';
 import { galleryItems } from './gallery-items';
-// import 'simplelightbox/dist/simple-lightbox.min.css';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 const divGallery = document.querySelector('.gallery');
 const createGalleryItems = galleryItems
   .map(({ preview, original, description }) => {
