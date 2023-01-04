@@ -1,48 +1,53 @@
-'use strict';
-import throttle from 'lodash.throttle';
+import throttle from "lodash.throttle";
 
-const feedbackFormEl = document.querySelector('.feedback-form');
-const email = document.querySelector('input[name="email"]');
-const message = document.querySelector('textarea[name="message"]');
-
-
+const STORAGE_KEY = 'feedback-form-state';
 let formData = {};
 
 
-const handleInputForm = event => {
-    formData[event.target.name] = event.target.value;
-    localStorage.setItem('feedback-form-state', JSON.stringify(formData));
-}
+const refs = {
+  form: document.querySelector('.feedback-form'),
+  textarea: document.querySelector('.feedback-form textarea'),
+  input: document.querySelector('.feedback-form input'),
+};
 
-const handleSubmitForm = event => {
-    event.preventDefault();
+refs.form.addEventListener('submit', onFormSubmit);
+refs.form.addEventListener('input', throttle(onFormDataInput, 500));
+
+function onFormSubmit(evt) {
+    evt.preventDefault();
+    evt.currentTarget.reset();
+    localStorage.removeItem(STORAGE_KEY);
     console.log(formData);
-    localStorage.removeItem('feedback-form-state');
-    feedbackFormEl.reset();
-    formData = {};
-};
-
-const load = key => {
-    try {
-        const serializedState = localStorage.getItem(key);
-        return JSON.parse(serializedState);
-    } catch (error) {
-        console.error('Get state error: ', error.message);
-    }
-};
-const storageData = load('feedback-form-state');
-
-if (storageData) {
-    email.value = storageData.email;
-    message.value = storageData.message;
-
-    if (!storageData.email) {
-        email.value = '';
-    } else if (!storageData.message) {
-        message.value = '';
-    }
 }
-feedbackFormEl.addEventListener('input', throttle(handleInputForm, 500))
-feedbackFormEl.addEventListener('submit', handleSubmitForm);
+
+function onFormDataInput(evt) {
+    formData[evt.target.name] = evt.target.value;
+    console.log(evt.target.name, evt.target.value);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+}
+
+function getFormData() {
+    const savedMessage = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    formData = savedMessage;
+ 
+
+    refs.input.value = savedMessage.email || '';
+    refs.textarea.value = savedMessage.message || '';
+}
+getFormData();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

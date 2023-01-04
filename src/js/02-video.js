@@ -3,26 +3,17 @@ import throttle from 'lodash.throttle';
 
 const iframe = document.querySelector('iframe');
 const player = new Player(iframe);
-// console.log('player', player);
+const STORAGE_KEY = "videoplayer-current-time"
 
-// player.on('play', function () {
-//   console.log('played the video!');
-// });
-
-// player.getVideoTitle().then(function (title) {
-//   console.log('title:', title);
-// });
-
-// player.on('play', function ({ duration, percent, seconds }) {
-
-// });
 const showSeconds = throttle(({ seconds }) => {
-    console.log('seconds', seconds);
-}, 3000)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seconds))
+    console.log(JSON.parse(localStorage.getItem(STORAGE_KEY)));
+}, 1000);
+
 player.on('timeupdate', showSeconds);
 
 
-player.setCurrentTime(30.456)
+player.setCurrentTime(JSON.parse(localStorage.getItem(STORAGE_KEY))||0);
 
   
 
@@ -32,11 +23,3 @@ player.setCurrentTime(30.456)
 
 
 
-// player
-//   .requestFullscreen()
-//   .then(function () {
-//     // the player entered fullscreen
-//   })
-//   .catch(function (error) {
-//     // an error occurred
-//   });
